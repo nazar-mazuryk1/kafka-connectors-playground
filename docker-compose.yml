@@ -26,10 +26,24 @@ services:
     networks:
       - kafka-network
 
+  schema-registry:
+    image: confluentinc/cp-schema-registry:latest  # Use the latest version of Schema Registry
+    depends_on:
+      - kafka
+    ports:
+      - "8081:8081"  # Schema Registry will be exposed on port 8081
+    environment:
+      SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS: PLAINTEXT://kafka:29092
+      SCHEMA_REGISTRY_HOST_NAME: schema-registry
+      SCHEMA_REGISTRY_LISTENERS: http://0.0.0.0:8081
+    networks:
+      - kafka-network
+
   kafka-connect:
     image: confluentinc/cp-kafka-connect:latest  # Use the latest version of Kafka Connect
     depends_on:
       - kafka
+      - schema-registry  # Ensure Schema Registry is available before starting Kafka Connect
     ports:
       - "8083:8083"
     environment:
