@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   zookeeper:
-    image: confluentinc/cp-zookeeper:latest  # Use the latest version of Zookeeper
+    image: confluentinc/cp-zookeeper:latest
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
       ZOOKEEPER_TICK_TIME: 2000
@@ -10,7 +10,7 @@ services:
       - kafka-network
 
   kafka:
-    image: confluentinc/cp-kafka:latest  # Use the latest version of Kafka
+    image: confluentinc/cp-kafka:latest
     depends_on:
       - zookeeper
     ports:
@@ -27,11 +27,11 @@ services:
       - kafka-network
 
   schema-registry:
-    image: confluentinc/cp-schema-registry:latest  # Use the latest version of Schema Registry
+    image: confluentinc/cp-schema-registry:latest
     depends_on:
       - kafka
     ports:
-      - "8081:8081"  # Schema Registry will be exposed on port 8081
+      - "8081:8081"
     environment:
       SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS: PLAINTEXT://kafka:29092
       SCHEMA_REGISTRY_HOST_NAME: schema-registry
@@ -40,10 +40,10 @@ services:
       - kafka-network
 
   kafka-connect:
-    image: confluentinc/cp-kafka-connect:latest  # Use the latest version of Kafka Connect
+    image: confluentinc/cp-kafka-connect:latest
     depends_on:
       - kafka
-      - schema-registry  # Ensure Schema Registry is available before starting Kafka Connect
+      - schema-registry
     ports:
       - "8083:8083"
     environment:
@@ -68,13 +68,36 @@ services:
       - kafka-network
 
   mssql:
-    image: mcr.microsoft.com/mssql/server:latest  # Use the latest version of MS SQL Server
+    image: mcr.microsoft.com/mssql/server:latest
     environment:
       ACCEPT_EULA: "Y"
       SA_PASSWORD: "StrongPassword123"
       MSSQL_PID: "Express"
     ports:
       - "1433:1433"
+    networks:
+      - kafka-network
+
+  control-center:
+    image: confluentinc/cp-enterprise-control-center:latest
+    depends_on:
+      - kafka
+      - schema-registry
+      - kafka-connect
+    ports:
+      - "9021:9021" # Control Center UI port
+    environment:
+      CONTROL_CENTER_BOOTSTRAP_SERVERS: kafka:29092
+      CONTROL_CENTER_ZOOKEEPER_CONNECT: zookeeper:2181
+      CONTROL_CENTER_CONNECT_CLUSTER: http://kafka-connect:8083
+      CONTROL_CENTER_SCHEMA_REGISTRY_URL: http://schema-registry:8081
+      CONTROL_CENTER_REPLICATION_FACTOR: 1
+      CONTROL_CENTER_MONITORING_INTERCEPTOR_TOPIC_PARTITIONS: 1
+      CONTROL_CENTER_INTERNAL_TOPICS_PARTITIONS: 1
+      CONTROL_CENTER_MONITORING_INTERCEPTOR_TOPIC_REPLICATION: 1
+      CONTROL_CENTER_INTERNAL_TOPICS_REPLICATION: 1
+      CONTROL_CENTER_CONNECT_CLUSTERS: "default::http://kafka-connect:8083"
+      CONTROL_CENTER_CONNECT_HEALTHCHECK_ENDPOINT: '/connectors'
     networks:
       - kafka-network
 

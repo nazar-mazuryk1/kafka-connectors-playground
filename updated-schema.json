@@ -1,0 +1,3 @@
+{
+    "schema": "{\"type\":\"record\",\"name\":\"SalesRecord\",\"fields\":[{\"name\":\"transaction_id\",\"type\":\"string\"},{\"name\":\"customer_id\",\"type\":\"string\"},{\"name\":\"amount\",\"type\":\"double\"},{\"name\":\"sales_date\",\"type\":\"string\",\"default\":\"\"}]}"
+}
