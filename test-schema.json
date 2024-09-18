@@ -1,4 +1,0 @@
-{
-    "schema": "{\"type\":\"record\",\"name\":\"TestSchema\",\"fields\":[{\"name\":\"name\",\"type\":\"string\"}]}"
-  }
-  
