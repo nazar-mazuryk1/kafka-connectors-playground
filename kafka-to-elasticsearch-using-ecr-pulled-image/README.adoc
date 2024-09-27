@@ -1,5 +1,3 @@
-This demo uses Docker and Docker Compose to provision the stack, but all you actually need for getting data from Kafka to Elasticsearch is Apache Kafka and the https://www.confluent.io/hub/confluentinc/kafka-connect-elasticsearch[Kafka Connect Elasticsearch Sink connector]. It also uses ksqlDB as an easy interface for producing/consuming from Kafka topics, and creating Kafka Connect connectors - but you don't have to use it in order to use Kafka Connect. 
-
 == Getting started 
 
 Before proceeding, please, configure local aws credentials: https://github.com/cricut/sre.docs/blob/main/aws-sso/aws-sso.md#how-to-configure-an-sso-profile-in-the-cli
