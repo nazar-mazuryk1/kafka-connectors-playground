@@ -1,5 +1,4 @@
 ---
-version: '2'
 services:
   zookeeper:
     image: confluentinc/cp-zookeeper:6.1.0
@@ -61,12 +60,9 @@ services:
 
   kafka-connect:
     image: confluentinc/cp-kafka-connect-base:6.1.0
-    container_name: kafka-connect
     depends_on:
       - broker
       - schema-registry
-    ports:
-      - 8083:8083
     environment:
       CONNECT_BOOTSTRAP_SERVERS: "broker:29092"
       CONNECT_REST_ADVERTISED_HOST_NAME: "kafka-connect"
@@ -84,6 +80,7 @@ services:
       CONNECT_CONFIG_STORAGE_REPLICATION_FACTOR: "1"
       CONNECT_OFFSET_STORAGE_REPLICATION_FACTOR: "1"
       CONNECT_STATUS_STORAGE_REPLICATION_FACTOR: "1"
+      CONNECT_CONNECTOR_CLIENT_CONFIG_OVERRIDE_POLICY: 'All'
       CONNECT_PLUGIN_PATH: '/usr/share/java,/usr/share/confluent-hub-components/,/connectors/'
       # If you want to use the Confluent Hub installer to d/l component, but make them available
       # when running this offline, spin up the stack once and then run : 
@@ -91,6 +88,9 @@ services:
       #   mv ./connectors/confluent-hub-components/* ./connectors
       #   rm -rf ./connectors/confluent-hub-components
     # In the command section, $ are replaced with $$ to avoid the error 'Invalid interpolation format for "command" option'
+    deploy:
+      mode: replicated
+      replicas: 3  # Number of instances you want to run
     command: 
       - bash 
       - -c 
@@ -98,6 +98,7 @@ services:
         echo "Installing connector plugins"
         confluent-hub install --no-prompt mdrogalis/voluble:0.3.1
         confluent-hub install --no-prompt confluentinc/kafka-connect-jdbc:5.5.3
+        confluent-hub install --no-prompt confluentinc/kafka-connect-datagen:latest
         # Sticking to 5.5.3 at the moment because of issue with 10.0.1 https://rmoff.net/2021/03/11/kafka-connect-sqlsyntaxerrorexception-blob/text-column-used-in-key-specification-without-a-key-length/
         #
         echo "Downloading JDBC driver"

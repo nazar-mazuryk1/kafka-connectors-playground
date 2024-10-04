@@ -206,7 +206,7 @@ services:
       - 8086:8083
     environment:
       CONNECT_BOOTSTRAP_SERVERS: "broker:29092"
-      CONNECT_REST_ADVERTISED_HOST_NAME: "kafka-connect"
+      CONNECT_REST_ADVERTISED_HOST_NAME: "kafka-connect-4"
       CONNECT_REST_PORT: 8083
       CONNECT_GROUP_ID: elasticsearch-connect-group
       CONNECT_CONFIG_STORAGE_TOPIC: _kafka-connect-configs
@@ -253,7 +253,7 @@ services:
       - 8087:8083
     environment:
       CONNECT_BOOTSTRAP_SERVERS: "broker:29092"
-      CONNECT_REST_ADVERTISED_HOST_NAME: "kafka-connect"
+      CONNECT_REST_ADVERTISED_HOST_NAME: "kafka-connect-5"
       CONNECT_REST_PORT: 8083
       CONNECT_GROUP_ID: elasticsearch-connect-group
       CONNECT_CONFIG_STORAGE_TOPIC: _kafka-connect-configs
